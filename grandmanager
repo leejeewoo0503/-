@@ -1,0 +1,58 @@
+// 2. GradeManager 클래스
+class GradeManager {
+    private List<Subject> subjects = new ArrayList<>();
+
+    // --- 학교 졸업 요건 상수 ---
+    public static final int REQ_TOTAL_CREDITS = 130;
+    public static final int REQ_MAJOR_BASIC = 3;
+    public static final int REQ_MAJOR_REQ = 15;
+    public static final int REQ_MAJOR_ELEC = 21;
+    public static final int REQ_MAJOR_TOTAL = 78;
+
+    public void addSubject(Subject s) {
+        subjects.add(s);
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public double calculateGPA() {
+        double totalPoints = 0;
+        int totalCredits = 0;
+
+        for (Subject s : subjects) {
+            totalPoints += s.getGradePoint() * s.getCredits();
+            totalCredits += s.getCredits();
+        }
+        return (totalCredits == 0) ? 0 : totalPoints / totalCredits;
+    }
+
+    public int getTotalCredits() {
+        return subjects.stream().mapToInt(Subject::getCredits).sum();
+    }
+
+    public int getCreditsByType(String type) {
+        return subjects.stream()
+                .filter(s -> s.getType().equals(type))
+                .mapToInt(Subject::getCredits)
+                .sum();
+    }
+    
+    // 이수 구분명 정규화 (UI의 콤보박스 값과 매핑)
+    public int getCreditsByCategory(String category) {
+       int sum = 0;
+       for(Subject s : subjects) {
+          if(category.equals("전공")) {
+             if(s.getType().contains("전공")) sum += s.getCredits();
+          } else if(category.equals("전공기초")) {
+             if(s.getType().equals("전공기초")) sum += s.getCredits();
+          } else if(category.equals("전공필수")) {
+             if(s.getType().equals("전공필수")) sum += s.getCredits();
+          } else if(category.equals("전공선택")) {
+             if(s.getType().equals("전공선택")) sum += s.getCredits();
+          }
+       }
+       return sum;
+    }
+}
